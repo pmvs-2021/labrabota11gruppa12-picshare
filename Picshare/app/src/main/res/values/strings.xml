@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Picshare</string>
+    <string name="open">Open</string>
+    <string name="save">Save</string>
+    <string name="share">Share</string>
+    <string name="chats">Chats</string>
+    <string name="search">Search</string>
+    <string name="find">Find!</string>
+    <string name="who_do_you_want_to_subscribe_to">Who do you want to subscribe to?🤔</string>
+    <string name="just_type_their_username_here">Just type their username here!</string>
+    <string name="user_not_found_msg">This user is not found \uD83D\uDE14</string>
+    <string name="already_subscribed_msg">You\'re already subscribed to this account!</string>
+    <string name="successfully_subscribed_msg">Successfully subscribed</string>
+</resources>
