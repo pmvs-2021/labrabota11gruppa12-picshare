@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import com.android.volley.toolbox.Volley
+import com.example.picshare.Metadata.thisUser
+import com.example.picshare.Metadata.requests
 import com.example.picshare.R
+import com.example.picshare.domain.User
 
 class MainActivity : AppCompatActivity() {
     private lateinit var ibtChats: ImageButton
@@ -19,9 +23,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        enterScreenData()
         supportActionBar!!.hide()
         bindLateinits()
         setListeners()
+    }
+
+
+    // TODO: should be removed when the enter screen will be implemented
+    private fun enterScreenData() {
+        thisUser =  User(1, "zmitser", "ne_skazhu")
+        requests = Volley.newRequestQueue(this)
     }
 
     private fun bindLateinits() {

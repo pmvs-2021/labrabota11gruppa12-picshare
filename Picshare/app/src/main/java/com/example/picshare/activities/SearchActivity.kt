@@ -8,8 +8,11 @@ import android.widget.EditText
 import com.example.picshare.Metadata.thisUser
 import com.example.picshare.R
 import com.example.picshare.domain.User
+import com.example.picshare.service.SubscriberService
+import com.example.picshare.service.UserService
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import com.google.android.material.snackbar.Snackbar
+import java.util.concurrent.ExecutionException
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var etUsername: EditText
@@ -28,30 +31,51 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setListeners() {
-        btFind.setOnClickListener{ v -> onFindClick(v) }
+        btFind.setOnClickListener { v -> onFindClick(v) }
     }
 
     private fun onFindClick(v: View?) {
+        startFindUser(v)
+    }
+
+    private fun startFindUser(v: View?) {
         val username = etUsername.text.toString()
-        val user = serviceFindByUsername(username)
-        if (user == null) {
-            Snackbar.make(v!!, getString(R.string.user_not_found_msg), LENGTH_SHORT).show()
-            return
+        val futureUser = UserService.findByUserName(username)
+        val t = Thread {
+            try {
+                val user: User = futureUser.get()
+                startCheckSubscriber(v, user.id)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            } catch (e: ExecutionException) {
+                e.printStackTrace()
+                Snackbar.make(v!!, getString(R.string.user_not_found_msg), LENGTH_SHORT).show()
+            }
         }
-        if (serviceIsSubscriber(user.id, thisUser!!.id)){
-            Snackbar.make(v!!, getString(R.string.already_subscribed_msg), LENGTH_SHORT).show()
-            return
-        }
-        Snackbar.make(v!!, getString(R.string.successfully_subscribed_msg), LENGTH_SHORT).show()
+        t.start()
     }
 
-    private fun serviceIsSubscriber(id: Int, thisUserId: Int): Boolean {
-        // TODO: create service call instead
-        return true
-    }
-
-    private fun serviceFindByUsername(username: String): User? {
-        // TODO: create service call instead
-        return null
+    private fun startCheckSubscriber(v : View?, userId: Int) {
+        val futureUsers = SubscriberService.getSubscribers(thisUser.id.toString())
+        val t = Thread {
+            try {
+                val users = futureUsers.get()
+                for (user in users) {
+                    if (user.id == userId){
+                        Snackbar.make(v!!, getString(R.string.already_subscribed_msg), LENGTH_SHORT).show()
+                        return@Thread
+                    }
+                }
+                SubscriberService.subscribe(userId, thisUser.id)
+                Snackbar.make(v!!, R.string.successfully_subscribed_msg, LENGTH_SHORT).show()
+                finish()
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            } catch (e: ExecutionException) {
+                e.printStackTrace()
+                Snackbar.make(v!!, getString(R.string.user_not_found_msg), LENGTH_SHORT).show()
+            }
+        }
+        t.start()
     }
 }
