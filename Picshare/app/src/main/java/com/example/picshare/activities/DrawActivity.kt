@@ -23,17 +23,9 @@ class DrawActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        enterScreenData()
         supportActionBar!!.hide()
         bindLateinits()
         setListeners()
-    }
-
-
-    // TODO: should be removed when the enter screen will be implemented
-    private fun enterScreenData() {
-        thisUser =  User(1, "zmitser", "ne_skazhu")
-        requests = Volley.newRequestQueue(this)
     }
 
     private fun bindLateinits() {

@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Picshare</string>
+    <string name="log_out">Log Out</string>
+    <string name="login">Login</string>
+    <string name="username">UserName</string>
+    <string name="password">Password</string>
     <string name="open">Open</string>
     <string name="save">Save</string>
     <string name="share">Share</string>
