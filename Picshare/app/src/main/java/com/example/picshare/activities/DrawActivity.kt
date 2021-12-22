@@ -13,7 +13,7 @@ import com.example.picshare.Metadata.requests
 import com.example.picshare.R
 import com.example.picshare.domain.User
 
-class MainActivity : AppCompatActivity() {
+class DrawActivity : AppCompatActivity() {
     private lateinit var ibtChats: ImageButton
     private lateinit var ibtOpen: ImageButton
     private lateinit var ibtSave: ImageButton
