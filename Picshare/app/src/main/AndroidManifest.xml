@@ -14,9 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Picshare">
         <activity
-            android:name=".activities.ChatsActivity"
-            android:parentActivityName=".activities.DrawActivity"
+            android:name=".activities.ChatActivity"
             android:exported="true" />
+        <activity
+            android:name=".activities.ChatsActivity"
+            android:exported="true"
+            android:parentActivityName=".activities.DrawActivity" />
         <activity
             android:name=".activities.LoginActivity"
             android:exported="true"

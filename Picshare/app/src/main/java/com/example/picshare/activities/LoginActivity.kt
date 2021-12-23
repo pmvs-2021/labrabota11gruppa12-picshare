@@ -35,9 +35,9 @@ class LoginActivity : AppCompatActivity() {
         pref = getSharedPreferences("user_details", MODE_PRIVATE)
         inten = Intent(this@LoginActivity, DrawActivity::class.java)
         if (pref!!.contains("username") && pref!!.contains("id")) {
-            startActivity(inten)
             Metadata.thisUser = User(pref!!.getInt("id", 0), pref!!.getString("username", "")!!,
                 "")
+            startActivity(inten)
         }
         loginBtn!!.setOnClickListener {
             val username: String = uname!!.text.toString()

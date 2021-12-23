@@ -1,17 +1,19 @@
 package com.example.picshare.activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.drawToBitmap
+import androidx.core.app.ActivityCompat
 import com.byox.drawview.views.DrawView
 import com.example.picshare.R
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
@@ -93,16 +95,29 @@ class DrawActivity : AppCompatActivity() {
     }
 
     private fun onSaveClick(v: View?) {
-        val file = File("picture")
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                0
+            )
+        }
+
+        val file = File(Environment.DIRECTORY_PICTURES + "savedBitmap.png")
 
         try {
-            file.createNewFile()
-
-            val ostream = FileOutputStream(file)
-            val bitmap = getBitmapFromView(dv)
-            bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, ostream)
-            ostream.flush()
-            ostream.close()
+            var fos: FileOutputStream? = null
+            try {
+                fos = FileOutputStream(file)
+                val bitmap = getBitmapFromView(dv)
+                bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            } finally {
+                fos?.close()
+            }
         } catch (e: Exception) {
             Toast.makeText(
                 applicationContext,
@@ -110,6 +125,23 @@ class DrawActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show();
         }
+//        val file = File("picture")
+//
+//        try {
+//            file.createNewFile()
+//
+//            val ostream = FileOutputStream(file)
+//            val bitmap = getBitmapFromView(dv)
+//            bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, ostream)
+//            ostream.flush()
+//            ostream.close()
+//        } catch (e: Exception) {
+//            Toast.makeText(
+//                applicationContext,
+//                "Error saving file: " + e.message,
+//                Toast.LENGTH_SHORT
+//            ).show();
+//        }
     }
 
     private fun getBitmapFromView(view: View): Bitmap? {
@@ -121,17 +153,14 @@ class DrawActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
-//        val state = dv.drawableState
-//        savedInstanceState.putByteArray("pic", state.toDrawable())
+//        val state = dv.drawableState.toCollection(ArrayList())
+//        savedInstanceState.putByteArray("pic")
         super.onSaveInstanceState(savedInstanceState)
     }
 
-    @Override
-    private fun onLoadInstanceState(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            val state = java.lang.Boolean.parseBoolean(savedInstanceState
-                .getString("pic", ""))
-            dv.drawToBitmap() //.drawableState = state
-        }
-    }
+//    fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+//        if (savedInstanceState != null) {
+//            var canvas = Canvas()
+//        }
+//    }
 }
