@@ -94,16 +94,16 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- TODO: ВОЗМОЖНО СТОИТ ЗАМЕНИТЬ ЧЕМ-ТО БОЛЕЕ ПОДХОДЯЩИМ, ЧЕМ FRAMELAYOUT!!!-->
-    <FrameLayout
-        android:id="@+id/flDrawing"
+
+    <com.byox.drawview.views.DrawView
+        android:id="@+id/drawView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_centerInParent="true"
         app:layout_constraintBottom_toTopOf="@+id/clPaintButtons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clControlButtons">
-
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@+id/clControlButtons" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clPaintButtons"
@@ -113,5 +113,25 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
+        <ImageButton
+            android:id="@+id/btnColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/palette"/>
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="204dp"
+            android:layout_height="39dp"
+            android:max="10"
+            android:progress="3"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btnColor"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
