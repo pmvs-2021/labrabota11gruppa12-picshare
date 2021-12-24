@@ -16,4 +16,5 @@
     <string name="already_subscribed_msg">You\'re already subscribed to this account!</string>
     <string name="successfully_subscribed_msg">Successfully subscribed</string>
     <string name="subscribe_title">Subscribe</string>
+    <string name="successfully_saved">Saved successfully</string>
 </resources>

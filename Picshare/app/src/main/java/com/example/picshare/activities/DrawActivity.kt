@@ -1,17 +1,16 @@
 package com.example.picshare.activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.widget.ImageButton
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.byox.drawview.views.DrawView
@@ -21,6 +20,19 @@ import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.github.dhaval2404.colorpicker.model.ColorSwatch
 import java.io.File
 import java.io.FileOutputStream
+import android.content.ContextWrapper
+import android.graphics.Color
+import androidx.core.view.drawToBitmap
+import com.example.picshare.Metadata
+import com.example.picshare.service.ChatService
+import com.example.picshare.service.ImageService
+import com.example.picshare.service.SubscriberService
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
+import java.io.IOException
+import java.lang.Exception
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import java.nio.ByteBuffer
 
 
 class DrawActivity : AppCompatActivity() {
@@ -49,6 +61,7 @@ class DrawActivity : AppCompatActivity() {
         ibtSearch = findViewById(R.id.ibtSearch)
         ibtColor = findViewById(R.id.btnColor)
         dv = findViewById(R.id.drawView)
+        dv.backgroundColor = Color.WHITE
         sb = findViewById(R.id.seekBar)
     }
 
@@ -71,6 +84,7 @@ class DrawActivity : AppCompatActivity() {
 
             }
         })
+        ibtShare.setOnClickListener { v -> onShareClick(v!!) }
     }
 
     private fun onSearchClick(v: View?) {
@@ -106,42 +120,25 @@ class DrawActivity : AppCompatActivity() {
                 0
             )
         }
-
-        val file = File(Environment.DIRECTORY_PICTURES + "savedBitmap.png")
-
+        val cw = ContextWrapper(applicationContext)
+        val directory = cw.getDir("Pictures", Context.MODE_PRIVATE)
+        val mypath = File(directory, System.currentTimeMillis().toString() + ".png")
+        var fos: FileOutputStream? = null
         try {
-            var fos: FileOutputStream? = null
-            try {
-                fos = FileOutputStream(file)
-                val bitmap = getBitmapFromView(dv)
-                bitmap!!.compress(Bitmap.CompressFormat.JPEG, 100, fos)
-            } finally {
-                fos?.close()
-            }
+            fos = FileOutputStream(mypath)
+            dv.drawToBitmap().compress(Bitmap.CompressFormat.PNG, 100, fos)
+            Snackbar.make(v!!, getString(R.string.successfully_saved),
+                BaseTransientBottomBar.LENGTH_SHORT
+            ).show()
         } catch (e: Exception) {
-            Toast.makeText(
-                applicationContext,
-                "Error saving file: " + e.message,
-                Toast.LENGTH_SHORT
-            ).show();
+            e.printStackTrace()
+        } finally {
+            try {
+                fos!!.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
-//        val file = File("picture")
-//
-//        try {
-//            file.createNewFile()
-//
-//            val ostream = FileOutputStream(file)
-//            val bitmap = getBitmapFromView(dv)
-//            bitmap!!.compress(Bitmap.CompressFormat.PNG, 100, ostream)
-//            ostream.flush()
-//            ostream.close()
-//        } catch (e: Exception) {
-//            Toast.makeText(
-//                applicationContext,
-//                "Error saving file: " + e.message,
-//                Toast.LENGTH_SHORT
-//            ).show();
-//        }
     }
 
     private fun getBitmapFromView(view: View): Bitmap? {
@@ -152,15 +149,21 @@ class DrawActivity : AppCompatActivity() {
         return bitmap
     }
 
-    override fun onSaveInstanceState(savedInstanceState: Bundle) {
-//        val state = dv.drawableState.toCollection(ArrayList())
-//        savedInstanceState.putByteArray("pic")
-        super.onSaveInstanceState(savedInstanceState)
+    private fun onShareClick(view: View) {
+        val bmp = dv.drawToBitmap()
+        println(bmp.byteCount)
+        val buf = ByteBuffer.allocate(bmp.byteCount)
+        bmp.copyPixelsToBuffer(buf)
+        val futureRes = ImageService.addImage(buf.array())
+        val futureSubscribers = SubscriberService.getSubscribers(Metadata.thisUser.id.toString())
+        val t = Thread {
+            val resp = futureRes.get()
+            println(resp.toString())
+            Snackbar.make(view, "Image sent to server", LENGTH_SHORT).show()
+            val subscribers = futureSubscribers.get().toCollection(ArrayList())
+            ChatService.sendMessage(subscribers, resp.getInt("id"))
+            Snackbar.make(view, "Sending to subscribers...", LENGTH_SHORT).show()
+        }
+        t.start()
     }
-
-//    fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-//        if (savedInstanceState != null) {
-//            var canvas = Canvas()
-//        }
-//    }
 }
