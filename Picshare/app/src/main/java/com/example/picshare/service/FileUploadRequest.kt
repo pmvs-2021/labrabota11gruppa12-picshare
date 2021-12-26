@@ -34,7 +34,6 @@ open class FileUploadRequest(
 
     @Throws(AuthFailureError::class)
     override fun getBody(): ByteArray {
-        println("TUUUUT")
         val byteArrayOutputStream = ByteArrayOutputStream()
         val dataOutputStream = DataOutputStream(byteArrayOutputStream)
         try {

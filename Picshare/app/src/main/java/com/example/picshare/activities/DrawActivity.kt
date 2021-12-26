@@ -2,11 +2,9 @@ package com.example.picshare.activities
 
 import android.Manifest
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -19,27 +17,20 @@ import com.example.picshare.R
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.github.dhaval2404.colorpicker.model.ColorSwatch
-import java.io.File
-import java.io.FileOutputStream
-import android.content.ContextWrapper
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.view.drawToBitmap
 import com.example.picshare.Metadata
-import com.example.picshare.service.ChatService
 import com.example.picshare.service.ImageService
 import com.example.picshare.service.SubscriberService
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import java.io.IOException
-import java.lang.Exception
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
 import java.io.OutputStream
 import java.nio.ByteBuffer
-import android.database.Cursor
 
 
 class DrawActivity : AppCompatActivity() {
@@ -92,6 +83,7 @@ class DrawActivity : AppCompatActivity() {
             }
         })
         ibtShare.setOnClickListener { v -> onShareClick(v!!) }
+        ibtOpen.setOnClickListener { v -> onLoadClick(v) }
     }
 
     private fun onSearchClick(v: View?) {
@@ -139,8 +131,6 @@ class DrawActivity : AppCompatActivity() {
                 put(MediaStore.Video.Media.IS_PENDING, 0)
             }
         }
-
-        //use application context to get contentResolver
         val contentResolver = application.contentResolver
 
         contentResolver.also { resolver ->
@@ -155,6 +145,27 @@ class DrawActivity : AppCompatActivity() {
         Snackbar.make(
             v!!, getString(R.string.successfully_saved), LENGTH_SHORT
         ).show()
+    }
+
+    private val imageFromGallery = 1
+
+    private fun onLoadClick(v: View?) {
+        val pickPhoto = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        )
+        startActivityForResult(pickPhoto, imageFromGallery)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            imageFromGallery -> if (resultCode == RESULT_OK) {
+                val selectedImage = data!!.data
+                val bmp = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage);
+                dv.background = BitmapDrawable(resources, bmp)
+            }
+        }
     }
 
     private fun onShareClick(view: View) {
