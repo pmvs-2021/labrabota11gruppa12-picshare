@@ -45,6 +45,7 @@ class DrawActivity : AppCompatActivity() {
     private lateinit var ibtSearch: ImageButton
     private lateinit var ibtColor: ImageButton
     private lateinit var ibtClear: ImageButton
+    private lateinit var ibtUndo: ImageButton
     private lateinit var dv: DrawView
     private lateinit var sb: SeekBar
 
@@ -73,6 +74,7 @@ class DrawActivity : AppCompatActivity() {
         ibtSearch = findViewById(R.id.ibtSearch)
         ibtColor = findViewById(R.id.btnColor)
         ibtClear = findViewById(R.id.btnClear)
+        ibtUndo = findViewById(R.id.btnUndo)
         dv = findViewById(R.id.drawView)
         dv.backgroundColor = Color.WHITE
         sb = findViewById(R.id.seekBar)
@@ -96,6 +98,7 @@ class DrawActivity : AppCompatActivity() {
         ibtShare.setOnClickListener { v -> onShareClick(v!!) }
         ibtOpen.setOnClickListener { v -> onLoadClick(v) }
         ibtClear.setOnClickListener { clear() }
+        ibtUndo.setOnClickListener { dv.undo() }
     }
 
     private fun onSearchClick(v: View?) {
@@ -221,6 +224,9 @@ class DrawActivity : AppCompatActivity() {
     }
 
     private fun clear() {
+        while (dv.canUndo()) {
+            dv.undo()
+        }
         dv.backgroundColor = Color.WHITE
     }
 
