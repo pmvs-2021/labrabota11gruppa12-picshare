@@ -2,6 +2,7 @@ package com.example.picshare.activities
 
 import android.Manifest
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -29,8 +30,11 @@ import com.example.picshare.service.ImageService
 import com.example.picshare.service.SubscriberService
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
-import java.io.OutputStream
 import java.nio.ByteBuffer
+
+import android.content.ContextWrapper
+import android.graphics.BitmapFactory
+import java.io.*
 
 
 class DrawActivity : AppCompatActivity() {
@@ -40,6 +44,7 @@ class DrawActivity : AppCompatActivity() {
     private lateinit var ibtShare: ImageButton
     private lateinit var ibtSearch: ImageButton
     private lateinit var ibtColor: ImageButton
+    private lateinit var ibtClear: ImageButton
     private lateinit var dv: DrawView
     private lateinit var sb: SeekBar
 
@@ -49,6 +54,15 @@ class DrawActivity : AppCompatActivity() {
         supportActionBar!!.hide()
         bindLateinits()
         setListeners()
+        tryGetLastImage()
+    }
+
+    private fun tryGetLastImage() {
+        val cw = ContextWrapper(applicationContext)
+        val directory = cw.getDir("last_image", Context.MODE_PRIVATE)
+        val f = File(directory, "last.jpg")
+        val bmp = BitmapFactory.decodeStream(FileInputStream(f));
+        dv.background = BitmapDrawable(resources, bmp)
     }
 
     private fun bindLateinits() {
@@ -58,6 +72,7 @@ class DrawActivity : AppCompatActivity() {
         ibtShare = findViewById(R.id.ibtShare)
         ibtSearch = findViewById(R.id.ibtSearch)
         ibtColor = findViewById(R.id.btnColor)
+        ibtClear = findViewById(R.id.btnClear)
         dv = findViewById(R.id.drawView)
         dv.backgroundColor = Color.WHITE
         sb = findViewById(R.id.seekBar)
@@ -74,16 +89,13 @@ class DrawActivity : AppCompatActivity() {
                 dv.drawWidth = progress * 2
             }
 
-            override fun onStartTrackingTouch(p0: SeekBar?) {
+            override fun onStartTrackingTouch(p0: SeekBar?) {}
 
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-
-            }
+            override fun onStopTrackingTouch(p0: SeekBar?) {}
         })
         ibtShare.setOnClickListener { v -> onShareClick(v!!) }
         ibtOpen.setOnClickListener { v -> onLoadClick(v) }
+        ibtClear.setOnClickListener { clear() }
     }
 
     private fun onSearchClick(v: View?) {
@@ -99,6 +111,7 @@ class DrawActivity : AppCompatActivity() {
     private fun onColorClick(v: View?) {
         MaterialColorPickerDialog
             .Builder(this)
+            .setDefaultColor(R.color.black)
             .setColorShape(ColorShape.SQAURE)
             .setColorSwatch(ColorSwatch._300)
             .setColorListener { color, _ ->
@@ -162,7 +175,8 @@ class DrawActivity : AppCompatActivity() {
         when (requestCode) {
             imageFromGallery -> if (resultCode == RESULT_OK) {
                 val selectedImage = data!!.data
-                val bmp = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage);
+                val bmp = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage)
+                clear()
                 dv.background = BitmapDrawable(resources, bmp)
             }
         }
@@ -185,4 +199,29 @@ class DrawActivity : AppCompatActivity() {
         }
         t.start()
     }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val cw = ContextWrapper(applicationContext)
+        val directory = cw.getDir("last_image", Context.MODE_PRIVATE)
+        val imgPath = File(directory, "last.jpg")
+        var fos: FileOutputStream? = null
+        try {
+            fos = FileOutputStream(imgPath)
+            dv.drawToBitmap().compress(Bitmap.CompressFormat.PNG, 100, fos)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            try {
+                fos!!.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun clear() {
+        dv.backgroundColor = Color.WHITE
+    }
+
 }
