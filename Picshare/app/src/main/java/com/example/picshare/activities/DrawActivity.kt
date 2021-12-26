@@ -1,6 +1,7 @@
 package com.example.picshare.activities
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -22,6 +23,10 @@ import java.io.File
 import java.io.FileOutputStream
 import android.content.ContextWrapper
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import androidx.core.view.drawToBitmap
 import com.example.picshare.Metadata
 import com.example.picshare.service.ChatService
@@ -32,7 +37,9 @@ import com.google.android.material.snackbar.Snackbar
 import java.io.IOException
 import java.lang.Exception
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_SHORT
+import java.io.OutputStream
 import java.nio.ByteBuffer
+import android.database.Cursor
 
 
 class DrawActivity : AppCompatActivity() {
@@ -120,33 +127,34 @@ class DrawActivity : AppCompatActivity() {
                 0
             )
         }
-        val cw = ContextWrapper(applicationContext)
-        val directory = cw.getDir("Pictures", Context.MODE_PRIVATE)
-        val mypath = File(directory, System.currentTimeMillis().toString() + ".png")
-        var fos: FileOutputStream? = null
-        try {
-            fos = FileOutputStream(mypath)
-            dv.drawToBitmap().compress(Bitmap.CompressFormat.PNG, 100, fos)
-            Snackbar.make(v!!, getString(R.string.successfully_saved),
-                BaseTransientBottomBar.LENGTH_SHORT
-            ).show()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            try {
-                fos!!.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
+
+        val filename = "IMG_${System.currentTimeMillis()}.jpg"
+        var fos: OutputStream?
+        var imageUri: Uri?
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                put(MediaStore.Video.Media.IS_PENDING, 0)
             }
         }
-    }
 
-    private fun getBitmapFromView(view: View): Bitmap? {
-        val bitmap =
-            Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        view.draw(canvas)
-        return bitmap
+        //use application context to get contentResolver
+        val contentResolver = application.contentResolver
+
+        contentResolver.also { resolver ->
+            imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            fos = imageUri?.let { resolver.openOutputStream(it) }
+        }
+
+        fos?.use { dv.drawToBitmap().compress(Bitmap.CompressFormat.JPEG, 100, it) }
+        contentValues.clear()
+        val realUri = contentResolver.update(imageUri!!, contentValues, null, null)
+        println(realUri)
+        Snackbar.make(
+            v!!, getString(R.string.successfully_saved), LENGTH_SHORT
+        ).show()
     }
 
     private fun onShareClick(view: View) {
@@ -160,9 +168,9 @@ class DrawActivity : AppCompatActivity() {
             val resp = futureRes.get()
             println(resp.toString())
             Snackbar.make(view, "Image sent to server", LENGTH_SHORT).show()
-            val subscribers = futureSubscribers.get().toCollection(ArrayList())
-            ChatService.sendMessage(subscribers, resp.getInt("id"))
-            Snackbar.make(view, "Sending to subscribers...", LENGTH_SHORT).show()
+//            val subscribers = futureSubscribers.get().toCollection(ArrayList())
+//            ChatService.sendMessage(subscribers, resp.getInt("id"))
+//            Snackbar.make(view, "Sending to subscribers...", LENGTH_SHORT).show()
         }
         t.start()
     }

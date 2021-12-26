@@ -1,5 +1,6 @@
 package com.example.picshare.service;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
@@ -14,15 +15,11 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 public class ImageService {
-    public static Future<JSONObject> addImage(byte[] image) {
+    public static Future<NetworkResponse> addImage(byte[] image) {
         String url = String.format("https://%s/draw", Metadata.INSTANCE.getServerURL());
-        Map<String, Object> params = new HashMap<>();
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        params.put("author_id", Metadata.INSTANCE.getThisUser().getId());
-        params.put("image", image);
-        System.out.println(new JSONObject(params).toString());
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
-                future, future);
+        RequestFuture<NetworkResponse> future = RequestFuture.newFuture();
+        FileUploadRequest request = new FileUploadRequest(Request.Method.POST, url, future, future);
+     //   request.getHeaders().put("author_id", String.valueOf(Metadata.INSTANCE.getThisUser().getId()));
         System.out.println("Request added");
         Metadata.requests.add(request);
         return future;
