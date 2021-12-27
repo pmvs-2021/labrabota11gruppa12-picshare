@@ -62,7 +62,6 @@ class ChatsActivity : AppCompatActivity() {
         for (resp in responses) {
             val cal = Calendar.getInstance();
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
-            //2021-12-23T13:10:27.40801Z
             val date = resp.time!!.substring(0, 10)
             val time = resp.time!!.substring(11, 18)
             cal.time = sdf.parse("$date $time")!!

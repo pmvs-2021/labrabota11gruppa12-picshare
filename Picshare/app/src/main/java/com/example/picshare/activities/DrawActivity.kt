@@ -62,6 +62,9 @@ class DrawActivity : AppCompatActivity() {
         val cw = ContextWrapper(applicationContext)
         val directory = cw.getDir("last_image", Context.MODE_PRIVATE)
         val f = File(directory, "last.jpg")
+        if (!f.exists()) {
+            return
+        }
         val bmp = BitmapFactory.decodeStream(FileInputStream(f));
         dv.background = BitmapDrawable(resources, bmp)
     }
