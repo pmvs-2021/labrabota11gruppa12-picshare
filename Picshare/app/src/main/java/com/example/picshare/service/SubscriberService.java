@@ -15,7 +15,7 @@ import java.util.concurrent.Future;
 
 public class SubscriberService {
     public static Future<User[]> getSubscribers(String id) {
-        String url = String.format("https://%s/subscriber?id=%s", Metadata.INSTANCE.getServerURL(), id);
+        String url = String.format("https://%s/subscriber?id=%s", Metadata.serverURL, id);
         RequestFuture<User[]> future = RequestFuture.newFuture();
         UserArrayRequest request = new UserArrayRequest(Request.Method.GET, url, future, future);
         Metadata.requests.add(request);
@@ -23,7 +23,7 @@ public class SubscriberService {
     }
 
     public static void subscribe(int subscriberId, int userId) {
-        String url = String.format("https://%s/subscriber", Metadata.INSTANCE.getServerURL());
+        String url = String.format("https://%s/subscriber", Metadata.serverURL);
         Map<String, Integer> params = new HashMap<>();
         params.put("user_id",userId);
         params.put("subscriber_id", subscriberId);

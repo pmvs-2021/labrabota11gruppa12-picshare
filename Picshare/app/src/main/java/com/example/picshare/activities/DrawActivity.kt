@@ -185,6 +185,13 @@ class DrawActivity : AppCompatActivity() {
         }
     }
 
+    private fun clear() {
+        while (dv.canUndo()) {
+            dv.undo()
+        }
+        dv.backgroundColor = Color.WHITE
+    }
+
     private fun onShareClick(view: View) {
         val bmp = dv.drawToBitmap()
         println(bmp.byteCount)
@@ -193,8 +200,8 @@ class DrawActivity : AppCompatActivity() {
         val futureRes = ImageService.addImage(buf.array())
         val futureSubscribers = SubscriberService.getSubscribers(Metadata.thisUser.id.toString())
         val t = Thread {
-            val resp = futureRes.get()
-            println(resp.toString())
+            //val resp = futureRes.get()
+            //println(resp.toString())
             Snackbar.make(view, "Image sent to server", LENGTH_SHORT).show()
 //            val subscribers = futureSubscribers.get().toCollection(ArrayList())
 //            ChatService.sendMessage(subscribers, resp.getInt("id"))
@@ -222,12 +229,4 @@ class DrawActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun clear() {
-        while (dv.canUndo()) {
-            dv.undo()
-        }
-        dv.backgroundColor = Color.WHITE
-    }
-
 }

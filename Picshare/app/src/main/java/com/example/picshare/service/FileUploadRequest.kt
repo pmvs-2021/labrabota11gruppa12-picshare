@@ -11,8 +11,10 @@ open class FileUploadRequest(
     method: Int,
     url: String,
     listener: Response.Listener<NetworkResponse>,
-    errorListener: Response.ErrorListener) : Request<NetworkResponse>(method, url, errorListener) {
+    errorListener: Response.ErrorListener
+) : Request<NetworkResponse>(method, url, errorListener) {
     private var responseListener: Response.Listener<NetworkResponse>? = null
+
     init {
         this.responseListener = listener
     }
@@ -24,7 +26,7 @@ open class FileUploadRequest(
 
 
     override fun getHeaders(): MutableMap<String, String> =
-        when(headers) {
+        when (headers) {
             null -> super.getHeaders()
             else -> headers!!.toMutableMap()
         }
@@ -40,7 +42,7 @@ open class FileUploadRequest(
             if (params != null && params!!.isNotEmpty()) {
                 processParams(dataOutputStream, params!!, paramsEncoding)
             }
-            val data = getByteData() as? Map<String, FileDataPart>?
+            val data = getByteData()
             if (data != null && data.isNotEmpty()) {
                 processData(dataOutputStream, data)
             }
@@ -54,7 +56,7 @@ open class FileUploadRequest(
     }
 
     @Throws(AuthFailureError::class)
-    open fun getByteData(): Map<String, Any>? {
+    open fun getByteData(): Map<String, FileDataPart>? {
         return null
     }
 
@@ -75,7 +77,11 @@ open class FileUploadRequest(
     }
 
     @Throws(IOException::class)
-    private fun processParams(dataOutputStream: DataOutputStream, params: Map<String, String>, encoding: String) {
+    private fun processParams(
+        dataOutputStream: DataOutputStream,
+        params: Map<String, String>,
+        encoding: String
+    ) {
         try {
             params.forEach {
                 dataOutputStream.writeBytes(divider + boundary + ending)
@@ -84,7 +90,10 @@ open class FileUploadRequest(
                 dataOutputStream.writeBytes(it.value + ending)
             }
         } catch (e: UnsupportedEncodingException) {
-            throw RuntimeException("Unsupported encoding not supported: $encoding with error: ${e.message}", e)
+            throw RuntimeException(
+                "Unsupported encoding not supported: $encoding with error: ${e.message}",
+                e
+            )
         }
     }
 
@@ -115,4 +124,6 @@ open class FileUploadRequest(
     }
 }
 
-class FileDataPart(var fileName: String?, var data: ByteArray, var type: String)
+class FileDataPart(var fileName: String?, var data: ByteArray, var type: String) {
+    constructor(fileName: String?, data: ByteArray) : this(fileName, data, "")
+}

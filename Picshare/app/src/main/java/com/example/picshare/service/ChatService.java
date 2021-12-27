@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class ChatService {
     public static void sendMessage(List<User> subscribers, int imageId) {
-        String url = String.format("https://%s/chat", Metadata.INSTANCE.getServerURL());
+        String url = String.format("https://%s/chat", Metadata.serverURL);
         for (User subscriber : subscribers) {
             Map<String, Integer> params = new HashMap<>();
             params.put("sender_id", Metadata.INSTANCE.getThisUser().getId());

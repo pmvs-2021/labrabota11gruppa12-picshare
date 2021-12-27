@@ -32,7 +32,7 @@ import java.util.concurrent.TimeoutException;
 public class UserService {
 
     public static Future<User> findByUserName(String username) {
-        String url = String.format("https://%s/user?username=%s", Metadata.INSTANCE.getServerURL(), username);
+        String url = String.format("https://%s/user?username=%s", Metadata.serverURL, username);
         RequestFuture<User> future = RequestFuture.newFuture();
         UserRequest request = new UserRequest(Request.Method.GET, url, future, future);
         Metadata.requests.add(request);
@@ -40,7 +40,7 @@ public class UserService {
     }
 
     public static Future<JSONObject> addUser(String username) {
-        String url = String.format("https://%s/user", Metadata.INSTANCE.getServerURL());
+        String url = String.format("https://%s/user", Metadata.serverURL);
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
