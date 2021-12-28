@@ -34,6 +34,9 @@ import java.nio.ByteBuffer
 
 import android.content.ContextWrapper
 import android.graphics.BitmapFactory
+import com.example.picshare.service.ChatService
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
+import org.json.JSONObject
 import java.io.*
 
 
@@ -202,13 +205,14 @@ class DrawActivity : AppCompatActivity() {
         bmp.copyPixelsToBuffer(buf)
         val futureRes = ImageService.addImage(buf.array())
         val futureSubscribers = SubscriberService.getSubscribers(Metadata.thisUser.id.toString())
+        Snackbar.make(view, "Image sent to server", LENGTH_LONG).show()
         val t = Thread {
-            //val resp = futureRes.get()
-            //println(resp.toString())
-            Snackbar.make(view, "Image sent to server", LENGTH_SHORT).show()
-//            val subscribers = futureSubscribers.get().toCollection(ArrayList())
-//            ChatService.sendMessage(subscribers, resp.getInt("id"))
-//            Snackbar.make(view, "Sending to subscribers...", LENGTH_SHORT).show()
+            val resp = futureRes.get()
+            val json = JSONObject(String(resp.data))
+            println(json)
+            val subscribers = futureSubscribers.get().toCollection(ArrayList())
+            ChatService.sendMessage(subscribers, json.getInt("id"))
+            Snackbar.make(view, "Sending to subscribers...", LENGTH_LONG).show()
         }
         t.start()
     }
