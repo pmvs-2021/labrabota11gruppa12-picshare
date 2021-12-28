@@ -57,17 +57,17 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun startCheckSubscriber(v : View?, userId: Int) {
-        val futureUsers = SubscriberService.getSubscribers(thisUser.id.toString())
+        val futureUsers = SubscriberService.getSubscribers(userId.toString())
         val t = Thread {
             try {
                 val users = futureUsers.get()
                 for (user in users) {
-                    if (user.id == userId){
+                    if (user.id == thisUser.id){
                         Snackbar.make(v!!, getString(R.string.already_subscribed_msg), LENGTH_SHORT).show()
                         return@Thread
                     }
                 }
-                SubscriberService.subscribe(userId, thisUser.id)
+                SubscriberService.subscribe(thisUser.id, userId)
                 Snackbar.make(v!!, R.string.successfully_subscribed_msg, LENGTH_SHORT).show()
                 finish()
             } catch (e: InterruptedException) {
