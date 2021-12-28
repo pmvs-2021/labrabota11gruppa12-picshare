@@ -11,7 +11,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.example.picshare.ImageViewActivity
 import com.example.picshare.Metadata
 import com.example.picshare.R
 import com.example.picshare.domain.Message
@@ -54,6 +53,7 @@ class ChatAdapter(var messages: MutableList<Message>, var ctx: Context) :
         holder.clMain.setOnClickListener {
             val intent = Intent(ctx, ImageViewActivity::class.java)
             intent.putExtra("title", holder.tvId.text)
+            intent.putExtra("image_id", w.imageId)
             ctx.startActivity(intent)
         }
     }

@@ -1,6 +1,7 @@
 package com.example.picshare.activities
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +25,15 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
         title = intent.getStringExtra("second_user_name")
-        secondUserId = intent.getIntExtra("second_user_id", 0)
+        secondUserId = intent.getIntExtra("second_user_id", -1)
+        if (secondUserId == -1) {
+            if (savedInstanceState == null) {
+                println("PANIC!!!")
+                return
+            }
+            title = savedInstanceState.getString("title")
+            secondUserId = savedInstanceState.getInt("second_user_id")
+        }
         setUpViews()
         getMessages()
     }
@@ -71,6 +80,13 @@ class ChatActivity : AppCompatActivity() {
             converted.add(Message(resp.image_id, resp.sender, resp.receiver ,cal))
         }
         return converted
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        println("SAVING STATE")
+        outState.putString("title", title.toString())
+        outState.putInt("second_user_id", secondUserId)
+        super.onSaveInstanceState(outState)
     }
 }
 
