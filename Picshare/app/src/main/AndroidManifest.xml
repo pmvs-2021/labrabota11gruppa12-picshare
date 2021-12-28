@@ -14,9 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Picshare">
         <activity
+            android:name=".ImageViewActivity"
+            android:exported="true"
+            android:parentActivityName=".activities.ChatActivity"/>
+        <activity
             android:name=".activities.ChatActivity"
-            android:parentActivityName=".activities.ChatsActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:parentActivityName=".activities.ChatsActivity" />
         <activity
             android:name=".activities.ChatsActivity"
             android:exported="true"

@@ -27,8 +27,8 @@ class ChatActivity : AppCompatActivity() {
         val messages = ArrayList<Message>()
         messages.add(
             Message(
-                byteArrayOf(0, 1, 2), User(
-                    0, "Екатерина Александровна ВРУБЛЕВСКАЯ -- " +
+                1, User(
+                    14, "Екатерина Александровна ВРУБЛЕВСКАЯ -- " +
                             "СПЕЦИАЛИСТ ПО СИ ШАРПУ И ЖИЗНИ В ОБЩАГЕ", ""
                 ), User(0, "Болван", ""),
                 Calendar.getInstance()
@@ -36,7 +36,7 @@ class ChatActivity : AppCompatActivity() {
         )
         messages.add(
             Message(
-                byteArrayOf(0, 1, 2), User(
+                2, User(
                     0, "Екатерина Александровна ВРУБЛЕВСКАЯ -- " +
                             "СПЕЦИАЛИСТ ПО СИ ШАРПУ И ЖИЗНИ В ОБЩАГЕ", ""
                 ), User(0, "Болван", ""),
