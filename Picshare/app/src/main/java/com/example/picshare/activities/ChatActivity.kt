@@ -83,7 +83,6 @@ class ChatActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        println("SAVING STATE")
         outState.putString("title", title.toString())
         outState.putInt("second_user_id", secondUserId)
         super.onSaveInstanceState(outState)

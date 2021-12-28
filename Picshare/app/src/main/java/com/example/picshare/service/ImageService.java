@@ -20,6 +20,7 @@ public class ImageService {
     private static final int TIMEOUT_MS = 60000;
 
     public static Future<NetworkResponse> addImage(byte[] image) {
+
         String url = String.format(Locale.US, "https://%s/draw?id=%d", Metadata.serverURL, Metadata.thisUser.getId());
         RequestFuture<NetworkResponse> future = RequestFuture.newFuture();
         FileUploadRequest request = new FileUploadRequest(Request.Method.POST, url, future, future) {
@@ -27,7 +28,7 @@ public class ImageService {
             public Map<String, FileDataPart> getByteData() {
                 Map<String, FileDataPart> params = new HashMap<>();
                 long imagename = System.currentTimeMillis();
-                params.put("image", new FileDataPart(imagename + ".png", image));
+                params.put("image", new FileDataPart(imagename + ".jpg", image));
                 return params;
             }
         };
@@ -35,7 +36,18 @@ public class ImageService {
                 TIMEOUT_MS, 0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        System.out.println("Request added");
+        Metadata.requests.add(request);
+        return future;
+    }
+
+    public static Future<NetworkResponse> getImage(int imageId) {
+        String url = String.format(Locale.US, "https://%s/draw?id=%d", Metadata.serverURL, imageId);
+        RequestFuture<NetworkResponse> future = RequestFuture.newFuture();
+        FileUploadRequest request = new FileUploadRequest(Request.Method.GET, url, future, future);
+        request.setRetryPolicy(new DefaultRetryPolicy(
+                TIMEOUT_MS, 0,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
         Metadata.requests.add(request);
         return future;
     }

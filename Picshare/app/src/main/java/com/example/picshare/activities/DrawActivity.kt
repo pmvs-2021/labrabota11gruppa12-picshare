@@ -14,7 +14,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.byox.drawview.views.DrawView
-import com.example.picshare.R
 import com.github.dhaval2404.colorpicker.MaterialColorPickerDialog
 import com.github.dhaval2404.colorpicker.model.ColorShape
 import com.github.dhaval2404.colorpicker.model.ColorSwatch
@@ -34,11 +33,13 @@ import java.nio.ByteBuffer
 
 import android.content.ContextWrapper
 import android.graphics.BitmapFactory
+import com.example.picshare.R
 import com.example.picshare.service.ChatService
 import com.example.picshare.service.ImageCache
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import org.json.JSONObject
 import java.io.*
+import java.io.ByteArrayOutputStream
 
 
 class DrawActivity : AppCompatActivity() {
@@ -194,11 +195,20 @@ class DrawActivity : AppCompatActivity() {
     }
 
     private fun onShareClick(view: View) {
-        val bmp = dv.drawToBitmap()
-        println(bmp.byteCount)
-        val buf = ByteBuffer.allocate(bmp.byteCount)
-        bmp.copyPixelsToBuffer(buf)
-        val futureRes = ImageService.addImage(buf.array())
+//        val bmp = dv.drawToBitmap()
+//        println(bmp.byteCount)
+//        val buf = ByteBuffer.allocate(bmp.byteCount)
+//        bmp.copyPixelsToBuffer(buf)
+
+
+        val stream = ByteArrayOutputStream()
+        dv.drawToBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val byteArray = stream.toByteArray()
+
+        println("WHITE COUNT on SEND: " + byteArray.count() {
+            it.toInt() == -1
+        })
+        val futureRes = ImageService.addImage(byteArray)
         val futureSubscribers = SubscriberService.getSubscribers(Metadata.thisUser.id.toString())
         Snackbar.make(view, "Image sent to server", LENGTH_LONG).show()
         val t = Thread {
