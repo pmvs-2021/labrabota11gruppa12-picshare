@@ -17,4 +17,5 @@
     <string name="successfully_subscribed_msg">Успешно подписан</string>
     <string name="subscribe_title">Подписаться</string>
     <string name="successfully_saved">Сохранено успешно</string>
+    <string name="loading">Загрузка...</string>
 </resources>
