@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name" translatable="false">Picshare</string>
+    <string name="log_out">Выйти</string>
+    <string name="login">Войти</string>
+    <string name="username">Имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="open">Открыть</string>
+    <string name="save">Сохранить</string>
+    <string name="share">Поделиться</string>
+    <string name="chats">Чаты</string>
+    <string name="search">Поиск</string>
+    <string name="find">Найти!</string>
+    <string name="who_do_you_want_to_subscribe_to">На кого вы хотите подписаться?🤔</string>
+    <string name="just_type_their_username_here">Введите имя пользователя!</string>
+    <string name="user_not_found_msg">Пользователь не найден \\uD83D\\uDE14</string>
+    <string name="already_subscribed_msg">Вы уже подписаны на этого пользователя!</string>
+    <string name="successfully_subscribed_msg">Успешно подписан</string>
+    <string name="subscribe_title">Подписаться</string>
+    <string name="successfully_saved">Сохранено успешно</string>
+</resources>

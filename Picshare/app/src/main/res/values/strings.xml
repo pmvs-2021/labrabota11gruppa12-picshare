@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Picshare</string>
+    <string name="app_name" translatable="false">Picshare</string>
     <string name="log_out">Log Out</string>
     <string name="login">Login</string>
     <string name="username">UserName</string>
