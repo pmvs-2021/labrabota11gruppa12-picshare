@@ -37,6 +37,7 @@ class ChatsAdapter(var users: MutableList<ChatName>, var ctx: Context) :
         holder.itemView.setOnClickListener {
             val intent = Intent(ctx, ChatActivity::class.java)
             intent.putExtra("second_user_name", w.subscriber!!.username)
+            intent.putExtra("second_user_id", w.subscriber!!.id)
             ctx.startActivity(intent)
         }
     }

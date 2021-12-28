@@ -2,10 +2,7 @@ package com.example.picshare.activities
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.text.format.DateUtils
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,8 +31,9 @@ class ChatAdapter(var messages: MutableList<Message>, var ctx: Context) :
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val w = messages[position]
-        if (ImageCache.contains(w.imageId)) {
-            holder.picture.setImageBitmap(ImageCache.load(w.imageId))
+        val bmp = ImageCache.downloadOrNull(ctx, w.imageId.toString())
+        if (bmp != null) {
+            holder.picture.setImageBitmap(bmp)
         } else {
             holder.picture.setImageResource(R.drawable.photo)
         }
@@ -46,7 +44,11 @@ class ChatAdapter(var messages: MutableList<Message>, var ctx: Context) :
         }
         if (w.sender!!.id == Metadata.thisUser.id) {
             holder.clCard.setBackgroundColor(ctx.getColor(R.color.blue_300))
+            holder.tvSender.visibility = View.GONE
         }
+
+        holder.tvSender.text = w.sender!!.username
+
         holder.tvTime.text = dateFormat.format(w.time!!.time)
         holder.tvId.text = String.format(ctx.getString(R.string.number_sign_d), w.imageId)
         holder.clMain.setOnClickListener {
@@ -62,10 +64,11 @@ class ChatAdapter(var messages: MutableList<Message>, var ctx: Context) :
     }
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var picture: ImageView = itemView.findViewById(R.id.picture)
-        var tvTime: TextView = itemView.findViewById(R.id.tvTime)
-        var tvId: TextView = itemView.findViewById(R.id.tvId)
-        var clMain: LinearLayout = itemView.findViewById(R.id.clMain)
-        var clCard: ConstraintLayout = itemView.findViewById(R.id.clCard)
+        val picture: ImageView = itemView.findViewById(R.id.picture)
+        val tvTime: TextView = itemView.findViewById(R.id.tvTime)
+        val tvId: TextView = itemView.findViewById(R.id.tvId)
+        val clMain: LinearLayout = itemView.findViewById(R.id.clMain)
+        val clCard: ConstraintLayout = itemView.findViewById(R.id.clCard)
+        val tvSender: TextView = itemView.findViewById(R.id.tvSender)
     }
 }
