@@ -35,6 +35,7 @@ import java.nio.ByteBuffer
 import android.content.ContextWrapper
 import android.graphics.BitmapFactory
 import com.example.picshare.service.ChatService
+import com.example.picshare.service.ImageCache
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_LONG
 import org.json.JSONObject
 import java.io.*
@@ -62,13 +63,7 @@ class DrawActivity : AppCompatActivity() {
     }
 
     private fun tryGetLastImage() {
-        val cw = ContextWrapper(applicationContext)
-        val directory = cw.getDir("last_image", Context.MODE_PRIVATE)
-        val f = File(directory, "last.jpg")
-        if (!f.exists()) {
-            return
-        }
-        val bmp = BitmapFactory.decodeStream(FileInputStream(f));
+        val bmp = ImageCache.downloadOrNull(applicationContext, "last")
         dv.background = BitmapDrawable(resources, bmp)
     }
 
@@ -219,21 +214,6 @@ class DrawActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val cw = ContextWrapper(applicationContext)
-        val directory = cw.getDir("last_image", Context.MODE_PRIVATE)
-        val imgPath = File(directory, "last.jpg")
-        var fos: FileOutputStream? = null
-        try {
-            fos = FileOutputStream(imgPath)
-            dv.drawToBitmap().compress(Bitmap.CompressFormat.PNG, 100, fos)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            try {
-                fos!!.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
+        ImageCache.upload(applicationContext, "last", dv.drawToBitmap())
     }
 }
