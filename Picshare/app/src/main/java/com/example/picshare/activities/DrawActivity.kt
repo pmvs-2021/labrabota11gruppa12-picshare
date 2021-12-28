@@ -195,12 +195,6 @@ class DrawActivity : AppCompatActivity() {
     }
 
     private fun onShareClick(view: View) {
-//        val bmp = dv.drawToBitmap()
-//        println(bmp.byteCount)
-//        val buf = ByteBuffer.allocate(bmp.byteCount)
-//        bmp.copyPixelsToBuffer(buf)
-
-
         val stream = ByteArrayOutputStream()
         dv.drawToBitmap().compress(Bitmap.CompressFormat.JPEG, 100, stream)
         val byteArray = stream.toByteArray()
