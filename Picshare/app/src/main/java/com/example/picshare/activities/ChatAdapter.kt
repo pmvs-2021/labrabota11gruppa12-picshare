@@ -18,7 +18,7 @@ import com.example.picshare.service.ImageCache
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatAdapter(var messages: MutableList<Message>, var ctx: Context) :
+class ChatAdapter(var messages: MutableList<Message>, var ctx: Context, var appContext: Context) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -30,7 +30,7 @@ class ChatAdapter(var messages: MutableList<Message>, var ctx: Context) :
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val w = messages[position]
-        val bmp = ImageCache.downloadOrNull(ctx, w.imageId.toString())
+        val bmp = ImageCache.downloadOrNull(appContext, w.imageId.toString())
         if (bmp != null) {
             holder.picture.setImageBitmap(bmp)
         } else {

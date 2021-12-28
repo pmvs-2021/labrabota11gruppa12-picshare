@@ -65,7 +65,7 @@ class ChatActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         rvMain!!.layoutManager = layoutManager
         val messages = ArrayList<Message>()
-        adapter = ChatAdapter(messages, this)
+        adapter = ChatAdapter(messages, this, applicationContext)
         rvMain.adapter = adapter
     }
 
