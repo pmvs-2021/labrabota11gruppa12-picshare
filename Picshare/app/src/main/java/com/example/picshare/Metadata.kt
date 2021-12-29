@@ -5,6 +5,6 @@ import com.example.picshare.domain.User
 
 object Metadata {
     lateinit var thisUser: User
-    const val serverURL = "7296-86-57-130-172.ngrok.io"
+    const val serverURL = "7dcd-46-56-202-59.ngrok.io"
     lateinit var requests : RequestQueue
 }
