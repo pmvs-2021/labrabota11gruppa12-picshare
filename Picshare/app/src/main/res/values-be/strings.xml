@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Picshare</string>
+    <string name="log_out">Выйсці</string>
+    <string name="login">Увайсці</string>
+    <string name="username">Імя карыстальніка</string>
+    <string name="password">Пароль</string>
+    <string name="open">Адкрыць</string>
+    <string name="save">Захаваць</string>
+    <string name="share">Падзяліцца</string>
+    <string name="chats">Чаты</string>
+    <string name="search">Пошук</string>
+    <string name="find">Знайсці!</string>
+    <string name="who_do_you_want_to_subscribe_to">На каго вы жадаеце падпісацца?🤔</string>
+    <string name="just_type_their_username_here">Увядзіце імя карыстальніка!</string>
+    <string name="user_not_found_msg">Такі карыстальнік не знойдзены  \\uD83D\\uDE14</string>
+    <string name="already_subscribed_msg">Вы ўжо падпісаны на гэтага карыстальніка!</string>
+    <string name="subscribe_title">Падісацца</string>
+    <string name="successfully_saved">Паспяхова захавана</string>
+    <string name="successfully_subscribed_msg">Паспяхова падпісаны</string>
+    <string name="loading">Загрузка...</string>
+</resources>
