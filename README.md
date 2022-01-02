@@ -13,3 +13,6 @@ At the top, you can save or load your pic, share it with your subscribers or swi
 ## Contributing
 * @mrZmitser - Zmitser Horbach. Server development and deployment, networking in the Android app.
 * @UzheNeKate - Ekaterina Vroublevskaia. Design and activities behavior in the Android app.
+
+## Server
+You can check out the server here: https://github.com/mrZmitser/Picshare-Server
